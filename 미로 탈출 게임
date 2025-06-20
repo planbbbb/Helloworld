@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>미로 탈출 게임</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+      font-family: Arial, sans-serif;
+    }
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-template-rows: repeat(5, 50px);
+      gap: 2px;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .wall {
+      background-color: black;
+    }
+    .player {
+      background-color: red;
+    }
+    .goal {
+      background-color: limegreen;
+    }
+  </style>
+</head>
+<body>
+  <div class="maze" id="maze"></div>
+
+  <script>
+    const mazeLayout = [
+      [0, 1, 0, 0, 0],
+      [0, 1, 0, 1, 0],
+      [0, 0, 0, 1, 0],
+      [1, 1, 0, 1, 0],
+      [0, 0, 0, 0, 2]  // 2는 도착 지점
+    ];
+
+    let playerPos = { x: 0, y: 0 };
+
+    function drawMaze() {
+      const maze = document.getElementById("maze");
+      maze.innerHTML = "";
+
+      for (let y = 0; y < 5; y++) {
+        for (let x = 0; x < 5; x++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          if (mazeLayout[y][x] === 1) {
+            cell.classList.add("wall");
+          } else if (mazeLayout[y][x] === 2) {
+            cell.classList.add("goal");
+          }
+
+          if (playerPos.x === x && playerPos.y === y) {
+            cell.classList.add("player");
+          }
+
+          maze.appendChild(cell);
+        }
+      }
+    }
+
+    function movePlayer(dx, dy) {
+      const newX = playerPos.x + dx;
+      const newY = playerPos.y + dy;
+
+      if (newX >= 0 && newX < 5 && newY >= 0 && newY < 5) {
+        if (mazeLayout[newY][newX] !== 1) {
+          playerPos.x = newX;
+          playerPos.y = newY;
+          drawMaze();
+
+          if (mazeLayout[newY][newX] === 2) {
+            setTimeout(() => {
+              alert("🎉 탈출 성공!");
+            }, 100);
+          }
+        }
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp": movePlayer(0, -1); break;
+        case "ArrowDown": movePlayer(0, 1); break;
+        case "ArrowLeft": movePlayer(-1, 0); break;
+        case "ArrowRight": movePlayer(1, 0); break;
+      }
+    });
+
+    drawMaze();
+  </script>
+</body>
+</html>
